@@ -1,0 +1,73 @@
+---
+title: OpenAntares — the open .ant format
+description: .ant is an open, integrity-checked, streamable container format for exchanging knowledge graphs — specified, schematized, and implemented in Rust, Python, and JavaScript under Apache-2.0.
+template: splash
+hero:
+  title: The .ant format
+  tagline: An open, integrity-checked, streamable container for exchanging knowledge graphs.
+  actions:
+    - text: The Rust implementation
+      link: implementation/antares-format/
+      icon: right-arrow
+    - text: Read the specification
+      link: format/spec/
+      icon: open-book
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import StarsGraph from '../../components/StarsGraph.astro';
+
+<StarsGraph />
+
+`.ant` is an open, self-contained container format for exchanging knowledge graphs. A `.ant` file is a single zstd-compressed stream of newline-delimited JSON records: a manifest first, then schema types, vertices, edges, observations, evidence, beliefs, embedding vectors, and deletion tombstones in any order, then a trailer whose per-kind counts and SHA-256 hash make truncation or tampering detectable in one pass. The format is openly specified under Apache-2.0, versioned `MAJOR.MINOR` with a same-major compatibility guarantee, and small enough that a conformant reader is about a hundred lines in any language with zstd and SHA-256.
+
+## Quickstart
+
+Install the CLI and validate a file — `validate` enforces every container rule, `info` prints the manifest and per-kind counts:
+
+```sh
+cargo install openantares
+
+openantares validate world.ant   # exit 0 clean, 65 on a bad file
+openantares info world.ant       # manifest, counts, format version
+```
+
+Or read files as a library:
+
+```sh
+cargo add antares-format
+```
+
+```rust
+use antares_format::AntReader;
+
+let mut reader = AntReader::new(std::fs::File::open("world.ant")?)?;
+while let Some(record) = reader.next_record()? {
+    // records stream; the trailer's SHA-256 and counts are verified as you go
+}
+```
+
+<CardGrid>
+	<Card title="Implementation" icon="seti:rust">
+		The canonical Rust crates: [ant-types](implementation/ant-types/) is the
+		record vocabulary, [antares-format](implementation/antares-format/) is the
+		streaming reader and writer that produced the golden files.
+	</Card>
+	<Card title="CLI" icon="laptop">
+		[`openantares`](cli/) validates and inspects `.ant` files, with a
+		sysexits exit-code contract shared by every reference binding.
+	</Card>
+	<Card title="Specification &amp; schema" icon="open-book">
+		The [normative spec](format/spec/) and the [JSON Schema](format/schema/),
+		served at its canonical `$id` URL on this site.
+	</Card>
+	<Card title="Conformance" icon="approve-check">
+		Golden files plus [runners in Rust, Python, and JavaScript](format/conformance/) —
+		and the contract a third-party implementation passes to prove itself.
+	</Card>
+</CardGrid>
+
+## Where the format comes from
+
+The `.ant` format is the interchange format of **Antares**, an enterprise discovery engine; the engine that produces and consumes these files is a separate, private product — see [openantares.com](https://www.openantares.com/). Everything documented on this site is open, Apache-2.0, and depends on none of it: the [specification, schema, bindings, and goldens](https://github.com/openantares/ant) and the [canonical Rust implementation](https://github.com/openantares/openantares) stand alone.

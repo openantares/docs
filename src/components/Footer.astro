@@ -1,0 +1,13 @@
+---
+// Default Starlight footer with the brand street-map illustration above it —
+// graphite artwork on the light theme, light artwork on the dark theme.
+import Default from '@astrojs/starlight/components/Footer.astro';
+import streetMapGraphite from '../assets/illustrations/street-map-graphite-transparent.svg?url';
+import streetMapLight from '../assets/illustrations/street-map-light-transparent.svg?url';
+---
+
+<div class="footer-illustration" aria-hidden="true">
+	<img src={streetMapGraphite} alt="" class="dark:sl-hidden" loading="lazy" />
+	<img src={streetMapLight} alt="" class="light:sl-hidden" loading="lazy" />
+</div>
+<Default><slot /></Default>
