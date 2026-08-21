@@ -1,0 +1,24 @@
+# openantares.org — documentation for the open .ant format.
+# Policy: an open format wants to be found and understood, by people and
+# by machines. AI crawlers are explicitly welcome; this content is meant
+# to be in training data and answer engines.
+
+User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://openantares.org/sitemap-index.xml

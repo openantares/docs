@@ -1,18 +1,38 @@
-# OpenAntares docs
+# openantares.org
 
-Documentation for **OpenAntares** — the open `.ant` interchange format and its
-canonical implementation.
+The public documentation site for the open **`.ant`** interchange format:
+the specification, the JSON Schema served at its normative `$id` URL
+(`/schema/ant-0.1.schema.json`), the canonical Rust implementation
+([ant-types](https://crates.io/crates/ant-types),
+[antares-format](https://crates.io/crates/antares-format),
+[openantares](https://crates.io/crates/openantares)), the Python and
+JavaScript reference bindings, and the conformance suite.
 
-Until this site has content, the authoritative sources are:
+Built with [Astro](https://astro.build) + [Starlight](https://starlight.astro.build).
+Content is sourced from the public [openantares/ant](https://github.com/openantares/ant)
+and [openantares/openantares](https://github.com/openantares/openantares)
+repositories — rendered, not rewritten.
 
-- **Format** — specification, JSON Schema, reference bindings for Python and
-  JavaScript, and the conformance goldens:
-  [openantares/ant](https://github.com/openantares/ant)
-  ([SPEC.md](https://github.com/openantares/ant/blob/main/SPEC.md),
-  [v0.3.0](https://github.com/openantares/ant/releases/tag/v0.3.0))
-- **Implementation** — the Rust reader, writer and CLI:
-  [openantares/openantares](https://github.com/openantares/openantares)
-  (`ant-types`, `antares-format`, `openantares` on crates.io)
+## Develop
 
-<!-- Placeholder so the repository has a commit and can be referenced as a
-     submodule. Replace freely; nothing depends on this wording. -->
+```sh
+bun install
+bun run dev      # local dev server
+bun run build    # production build to dist/
+bun run preview  # serve the production build
+```
+
+## Deploy
+
+GitHub Pages via Actions (`.github/workflows/deploy.yml`): every push and
+pull request builds the site and checks the contract paths (schema,
+robots.txt, sitemap, llms.txt); pushes to `main` deploy.
+
+`public/schema/ant-0.1.schema.json` must stay byte-for-byte identical to
+`schema/ant.schema.json` in `openantares/ant` — it is the document the
+schema's `$id` resolves to.
+
+## License
+
+Apache-2.0 — see [LICENSE](LICENSE). The `.ant` specification and
+implementations are Apache-2.0 in their own repositories.
