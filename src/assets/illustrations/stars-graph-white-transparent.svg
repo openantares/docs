@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Camada_2" data-name="Camada 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920.02 1072.7">
+  <defs>
+    <style>
+      .sgd-1 {
+        fill: #a11d3b;
+      }
+
+      .sgd-1, .sgd-2 {
+        font-size: 30px;
+      }
+
+      .sgd-1, .sgd-2, .sgd-3, .sgd-4 {
+        font-family: MyriadPro-Regular, 'Myriad Pro';
+      }
+
+      .sgd-5 {
+        stroke-width: 13px;
+      }
+
+      .sgd-5, .sgd-6, .sgd-7, .sgd-8, .sgd-9, .sgd-10, .sgd-11, .sgd-12, .sgd-13, .sgd-14 {
+        fill: none;
+        stroke-miterlimit: 10;
+      }
+
+      .sgd-5, .sgd-9, .sgd-10 {
+        stroke: #a11d3b;
+      }
+
+      .sgd-6 {
+        stroke-width: 9px;
+      }
+
+      .sgd-6, .sgd-7, .sgd-8, .sgd-11, .sgd-12, .sgd-13, .sgd-14 {
+        stroke: #e3e0db;
+      }
+
+      .sgd-7 {
+        stroke-width: 4px;
+      }
+
+      .sgd-8, .sgd-10 {
+        stroke-width: 3px;
+      }
+
+      .sgd-9 {
+        stroke-width: 7px;
+      }
+
+      .sgd-10, .sgd-14 {
+        stroke-dasharray: 12;
+      }
+
+      .sgd-11 {
+        stroke-dasharray: 11.99 11.99;
+      }
+
+      .sgd-11, .sgd-12, .sgd-14 {
+        stroke-width: 2px;
+      }
+
+      .sgd-15, .sgd-2, .sgd-3, .sgd-4 {
+        fill: #e3e0db;
+      }
+
+      .sgd-16 {
+        letter-spacing: 0em;
+      }
+
+      .sgd-17 {
+        letter-spacing: -.08em;
+      }
+
+      .sgd-18 {
+        letter-spacing: 0em;
+      }
+
+      .sgd-3 {
+        font-size: 21px;
+      }
+
+      .sgd-4 {
+        font-size: 17.35px;
+      }
+
+      .sgd-19 {
+        letter-spacing: 0em;
+      }
+    </style>
+  </defs>
+  <g id="Camada_12" data-name="Camada 12">
+    <g>
+      <line class="sgd-13" x1="960" y1="1.93" x2="960" y2="1072.7"/>
+      <line class="sgd-13" x1="1428.24" y1="1.93" x2="1428.24" y2="1072.7"/>
+      <line class="sgd-13" x1="523.39" y1="1.93" x2="523.39" y2="1072.7"/>
+      <line class="sgd-13" x1="0" y1="323.23" x2="1920" y2="323.15"/>
+      <line class="sgd-13" x1=".02" y1="765.26" x2="1920.02" y2="765.18"/>
+      <rect class="sgd-5" x="651.47" y="372.95" width="41.09" height="41.09" transform="translate(868.9604 1146.9362) rotate(-135)"/>
+      <rect class="sgd-6" x="1678.42" y="923.76" width="41.09" height="41.09" transform="translate(2232.582 2813.3845) rotate(-135)"/>
+      <circle class="sgd-15" cx="1199" cy="912.87" r="13.82"/>
+      <circle class="sgd-8" cx="1380.71" cy="398.43" r="17.84"/>
+      <circle class="sgd-8" cx="193.57" cy="94.78" r="17.84"/>
+      <circle class="sgd-8" cx="377.26" cy="899.05" r="17.84"/>
+      <g>
+        <line class="sgd-12" x1="690.88" y1="438.32" x2="695.26" y2="442.42"/>
+        <line class="sgd-11" x1="704.02" y1="450.6" x2="1190.23" y2="904.68"/>
+        <line class="sgd-12" x1="1194.61" y1="908.77" x2="1199" y2="912.87"/>
+      </g>
+      <line class="sgd-14" x1="395.1" y1="863.37" x2="637.06" y2="438.32"/>
+      <line class="sgd-14" x1="223.13" y1="112.61" x2="637.06" y2="371.95"/>
+      <line class="sgd-14" x1="1354.71" y1="409.46" x2="715.39" y2="386.95"/>
+      <line class="sgd-7" x1="995" y1="612.83" x2="1671.67" y2="928.76"/>
+      <line class="sgd-10" x1="1223.98" y1="916.88" x2="1661.09" y2="944.31"/>
+      <line class="sgd-9" x1="1199" y1="899.05" x2="995" y2="612.83"/>
+      <line class="sgd-9" x1="697" y1="414.01" x2="997.26" y2="613.89"/>
+      <text class="sgd-3" transform="translate(6.82 17.58)"><tspan x="0" y="0">00º</tspan></text>
+      <text class="sgd-3" transform="translate(7.57 340.89)"><tspan x="0" y="0">50º</tspan></text>
+      <text class="sgd-3" transform="translate(7.57 790.14)"><tspan x="0" y="0">30º</tspan></text>
+      <text class="sgd-3" transform="translate(529.41 17.58)"><tspan x="0" y="0">20º</tspan></text>
+      <text class="sgd-3" transform="translate(965.04 17.81)"><tspan x="0" y="0">40º</tspan></text>
+      <text class="sgd-3" transform="translate(1433.2445 17.5776)"><tspan x="0" y="0">60º</tspan></text>
+      <text class="sgd-3" transform="translate(1109.0877 289.416)"><tspan x="0" y="0">73</tspan></text>
+      <text class="sgd-3" transform="translate(1380.7127 683.6872)"><tspan x="0" y="0">67</tspan></text>
+      <text class="sgd-4" transform="translate(826.64 632.31) scale(1.21 1)"><tspan x="0" y="0">17</tspan></text>
+      <text class="sgd-3" transform="translate(808.25 865.98)"><tspan x="0" y="0">68</tspan></text>
+      <text class="sgd-3" transform="translate(1266.4613 846.1531)"><tspan x="0" y="0">23</tspan></text>
+      <text class="sgd-3" transform="translate(359.42 380.59)"><tspan x="0" y="0">74</tspan></text>
+      <text class="sgd-3" transform="translate(1576.5858 590.9713)"><tspan x="0" y="0">70</tspan></text>
+      <text class="sgd-3" transform="translate(324.95 133.44)"><tspan x="0" y="0">75</tspan></text>
+      <text class="sgd-2" transform="translate(218.09 76.94)"><tspan x="0" y="0">DN-17</tspan></text>
+      <text class="sgd-2" transform="translate(408.46 910.11)"><tspan class="sgd-19" x="0" y="0">S</tspan><tspan x="14.94" y="0">-07</tspan></text>
+      <text class="sgd-1" transform="translate(693.4 366.94)"><tspan class="sgd-17" x="0" y="0">A</tspan><tspan x="16.05" y="0">T55</tspan></text>
+      <text class="sgd-2" transform="translate(1411.8646 393.5009)"><tspan x="0" y="0">DG11</tspan></text>
+      <text class="sgd-2" transform="translate(1724.3744 930.5965)"><tspan x="0" y="0">S</tspan><tspan class="sgd-18" x="14.79" y="0">A</tspan><tspan class="sgd-16" x="33.06" y="0">-11</tspan></text>
+      <text class="sgd-2" transform="translate(1212.8197 963.4581)"><tspan x="0" y="0">AN-7</tspan></text>
+    </g>
+  </g>
+</svg>

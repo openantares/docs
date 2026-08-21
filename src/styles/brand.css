@@ -1,0 +1,99 @@
+/* OpenAntares brand — from the Antares design-system token table.
+ * One accent per composition (ruby, 5–15%); flat fields, no gradients. */
+
+@font-face {
+	font-family: 'Nimbus Sans L';
+	src: url('../fonts/NimbusSanL-Regu.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'Nimbus Sans L';
+	src: url('../fonts/NimbusSanL-Bold.ttf') format('truetype');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+:root {
+	/* type — display Nimbus Sans L; text Arimo metrics; data IBM Plex Mono */
+	--sl-font: Arimo, 'Liberation Sans', 'Helvetica Neue', Arial, sans-serif;
+	--sl-font-mono: 'IBM Plex Mono', 'Liberation Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+	/* dark theme — the dark plate: warm near-black ground, graphite structure,
+	 * warm off-white type. Accent link tone is derived from ruby only. */
+	--sl-color-accent-low: #3d1018;
+	--sl-color-accent: #8e1b2d; /* ruby — the one accent */
+	--sl-color-accent-high: color-mix(in srgb, #8e1b2d 42%, #f2f0eb);
+	--sl-color-white: #f2f0eb; /* warm white */
+	--sl-color-gray-1: #dedbd2;
+	--sl-color-gray-2: #c9c6bd; /* body text */
+	--sl-color-gray-3: #8f918f; /* steel, muted */
+	--sl-color-gray-4: #4b4b48;
+	--sl-color-gray-5: #3a3a38; /* graphite hairlines */
+	--sl-color-gray-6: #1a1b1b; /* raised surfaces: nav, sidebar, code */
+	--sl-color-black: #101111; /* page ground */
+}
+
+:root[data-theme='light'] {
+	/* light theme — warm-white paper, bone plates, black type */
+	--sl-color-accent-low: #f0e4e4; /* ruby tint */
+	--sl-color-accent: #8e1b2d;
+	--sl-color-accent-high: #71161f; /* ruby pressed */
+	--sl-color-white: #090909; /* type on light */
+	--sl-color-gray-1: #26261f;
+	--sl-color-gray-2: #33332f; /* body text, near-graphite */
+	--sl-color-gray-3: #777a7c; /* steel, muted */
+	--sl-color-gray-4: #a5a29a;
+	--sl-color-gray-5: #d7d4cb; /* warm neutral: hairlines, inset fields */
+	--sl-color-gray-6: #ece9e0; /* bone: code blocks, raised paper */
+	--sl-color-gray-7: #e9e6dd; /* nav plate, between bone and paper */
+	--sl-color-black: #f2f0eb; /* the default ground */
+}
+
+/* Display face for headings — bold, tight; emphasis is weight, never italic. */
+.sl-markdown-content :is(h1, h2, h3, h4, h5),
+.content-panel h1,
+.hero h1,
+.hero .tagline {
+	font-family: 'Nimbus Sans L', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	letter-spacing: -0.022em;
+}
+
+/* Keep the header wordmark at a quiet, fixed height. */
+.site-title img {
+	height: 1.375rem;
+	width: auto;
+}
+
+/* Hero illustration (stars graph) — flat field, no decoration beyond it. */
+.hero-illustration {
+	margin-inline: auto;
+	max-width: 46rem;
+}
+.hero-illustration svg {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+/* The illustration labels ride in the page's data face if the original
+ * face is unavailable — never a serif fallback. */
+.hero-illustration svg text {
+	font-family: var(--sl-font-mono);
+}
+
+/* Footer illustration — city-map plate above the default footer. */
+.footer-illustration {
+	margin-top: 3rem;
+	border-top: 1px solid var(--sl-color-hairline-light);
+	padding-top: 1.5rem;
+}
+.footer-illustration img {
+	display: block;
+	margin-inline: auto;
+	width: 100%;
+	max-width: 28rem;
+	height: auto;
+	opacity: 0.85;
+}

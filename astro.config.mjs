@@ -3,16 +3,42 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightLlmsTxt from 'starlight-llms-txt';
 
+const SITE = 'https://openantares.org';
+// Pre-DNS phase: the site is served at openantares.github.io/docs.
+// BASE flips to '/' when the openantares.org custom domain goes live.
+const BASE = '/docs';
+// Site-wide default social card; pages can override it by declaring their
+// own og:image/twitter:image tags in `head` frontmatter.
+const OG_IMAGE = `${SITE}${BASE === '/' ? '' : BASE}/og-default.png`;
+
 export default defineConfig({
-	site: 'https://openantares.org',
-	// Pre-DNS phase: the site is served at openantares.github.io/docs.
-	// This line is removed when the openantares.org custom domain flips on.
-	base: '/docs',
+	site: SITE,
+	base: BASE,
 	integrations: [
 		starlight({
 			title: 'OpenAntares',
 			description:
 				'The open .ant interchange format for knowledge graphs: specification, JSON Schema, canonical Rust implementation, CLI, reference bindings, and conformance suite.',
+			logo: {
+				light: './src/assets/brand/openantares-wordmark-black.png',
+				dark: './src/assets/brand/openantares-wordmark-white.png',
+				replacesTitle: true,
+				alt: 'OpenAntares',
+			},
+			customCss: ['./src/styles/brand.css'],
+			components: {
+				Footer: './src/components/Footer.astro',
+			},
+			head: [
+				{
+					tag: 'meta',
+					attrs: { property: 'og:image', content: OG_IMAGE },
+				},
+				{
+					tag: 'meta',
+					attrs: { name: 'twitter:image', content: OG_IMAGE },
+				},
+			],
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/openantares' },
 			],

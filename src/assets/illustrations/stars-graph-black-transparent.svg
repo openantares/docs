@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Camada_2" data-name="Camada 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920.02 1072.7">
+  <defs>
+    <style>
+      .sgl-1 {
+        fill: #a11d3b;
+      }
+
+      .sgl-1, .sgl-2, .sgl-3, .sgl-4 {
+        font-family: MyriadPro-Regular, 'Myriad Pro';
+      }
+
+      .sgl-1, .sgl-4 {
+        font-size: 30px;
+      }
+
+      .sgl-5 {
+        stroke-width: 13px;
+      }
+
+      .sgl-5, .sgl-6, .sgl-7 {
+        stroke: #a11d3b;
+      }
+
+      .sgl-5, .sgl-6, .sgl-7, .sgl-8, .sgl-9, .sgl-10, .sgl-11, .sgl-12, .sgl-13 {
+        fill: none;
+        stroke-miterlimit: 10;
+      }
+
+      .sgl-6 {
+        stroke-width: 7px;
+      }
+
+      .sgl-7, .sgl-10 {
+        stroke-dasharray: 12;
+      }
+
+      .sgl-7, .sgl-13 {
+        stroke-width: 3px;
+      }
+
+      .sgl-8, .sgl-9, .sgl-10, .sgl-11, .sgl-12, .sgl-13 {
+        stroke: #3d3d3d;
+      }
+
+      .sgl-8, .sgl-10, .sgl-11 {
+        stroke-width: 2px;
+      }
+
+      .sgl-14 {
+        letter-spacing: 0em;
+      }
+
+      .sgl-15, .sgl-2, .sgl-3, .sgl-4 {
+        fill: #3d3d3d;
+      }
+
+      .sgl-16 {
+        fill: #616160;
+      }
+
+      .sgl-2 {
+        font-size: 17.35px;
+      }
+
+      .sgl-3 {
+        font-size: 21px;
+      }
+
+      .sgl-17 {
+        letter-spacing: -.08em;
+      }
+
+      .sgl-18 {
+        letter-spacing: 0em;
+      }
+
+      .sgl-11 {
+        stroke-dasharray: 11.99 11.99;
+      }
+
+      .sgl-12 {
+        stroke-width: 9px;
+      }
+
+      .sgl-19 {
+        letter-spacing: 0em;
+      }
+    </style>
+  </defs>
+  <g id="Camada_12" data-name="Camada 12">
+    <g>
+      <line class="sgl-9" x1="960" y1="1.93" x2="960" y2="1072.7"/>
+      <line class="sgl-9" x1="1428.24" y1="1.93" x2="1428.24" y2="1072.7"/>
+      <line class="sgl-9" x1="523.39" y1="1.93" x2="523.39" y2="1072.7"/>
+      <line class="sgl-9" x1="0" y1="323.23" x2="1920" y2="323.15"/>
+      <line class="sgl-9" x1=".02" y1="765.26" x2="1920.02" y2="765.18"/>
+      <rect class="sgl-5" x="651.47" y="372.95" width="41.09" height="41.09" transform="translate(868.961 1146.9348) rotate(-135)"/>
+      <rect class="sgl-12" x="1678.42" y="923.76" width="41.09" height="41.09" transform="translate(2232.5825 2813.3831) rotate(-135)"/>
+      <circle class="sgl-15" cx="1199" cy="912.87" r="13.82"/>
+      <circle class="sgl-13" cx="1380.71" cy="398.43" r="17.84"/>
+      <circle class="sgl-13" cx="193.57" cy="94.78" r="17.84"/>
+      <circle class="sgl-13" cx="377.26" cy="899.04" r="17.84"/>
+      <g>
+        <line class="sgl-8" x1="690.88" y1="438.32" x2="695.26" y2="442.42"/>
+        <line class="sgl-11" x1="704.02" y1="450.6" x2="1190.23" y2="904.68"/>
+        <line class="sgl-8" x1="1194.61" y1="908.77" x2="1199" y2="912.87"/>
+      </g>
+      <line class="sgl-10" x1="395.1" y1="863.37" x2="637.06" y2="438.32"/>
+      <line class="sgl-10" x1="223.13" y1="112.61" x2="637.06" y2="371.95"/>
+      <line class="sgl-10" x1="1354.71" y1="409.46" x2="715.39" y2="386.95"/>
+      <line class="sgl-16" x1="995" y1="612.83" x2="1671.67" y2="928.75"/>
+      <line class="sgl-7" x1="1223.98" y1="916.88" x2="1661.09" y2="944.31"/>
+      <line class="sgl-6" x1="1199" y1="899.04" x2="995" y2="612.83"/>
+      <line class="sgl-6" x1="697" y1="414.01" x2="997.26" y2="613.89"/>
+      <text class="sgl-3" transform="translate(6.82 17.58)"><tspan x="0" y="0">00º</tspan></text>
+      <text class="sgl-3" transform="translate(7.57 340.88)"><tspan x="0" y="0">50º</tspan></text>
+      <text class="sgl-3" transform="translate(7.57 790.14)"><tspan x="0" y="0">30º</tspan></text>
+      <text class="sgl-3" transform="translate(529.41 17.58)"><tspan x="0" y="0">20º</tspan></text>
+      <text class="sgl-3" transform="translate(965.04 17.81)"><tspan x="0" y="0">40º</tspan></text>
+      <text class="sgl-3" transform="translate(1433.2444 17.5768)"><tspan x="0" y="0">60º</tspan></text>
+      <text class="sgl-3" transform="translate(1109.0877 289.4153)"><tspan x="0" y="0">73</tspan></text>
+      <text class="sgl-3" transform="translate(1380.7129 683.6862)"><tspan x="0" y="0">67</tspan></text>
+      <text class="sgl-2" transform="translate(826.64 632.31) scale(1.21 1)"><tspan x="0" y="0">17</tspan></text>
+      <text class="sgl-3" transform="translate(808.25 865.98)"><tspan x="0" y="0">68</tspan></text>
+      <text class="sgl-3" transform="translate(1266.4612 846.1523)"><tspan x="0" y="0">23</tspan></text>
+      <text class="sgl-3" transform="translate(359.42 380.59)"><tspan x="0" y="0">74</tspan></text>
+      <text class="sgl-3" transform="translate(1576.5857 590.9704)"><tspan x="0" y="0">70</tspan></text>
+      <text class="sgl-3" transform="translate(324.95 133.44)"><tspan x="0" y="0">75</tspan></text>
+      <text class="sgl-4" transform="translate(218.09 76.94)"><tspan x="0" y="0">DN-17</tspan></text>
+      <text class="sgl-4" transform="translate(408.46 910.11)"><tspan class="sgl-19" x="0" y="0">S</tspan><tspan x="14.94" y="0">-07</tspan></text>
+      <text class="sgl-1" transform="translate(693.4 366.94)"><tspan class="sgl-17" x="0" y="0">A</tspan><tspan x="16.05" y="0">T55</tspan></text>
+      <text class="sgl-4" transform="translate(1411.8643 393.5)"><tspan x="0" y="0">DG11</tspan></text>
+      <text class="sgl-4" transform="translate(1724.374 930.5957)"><tspan x="0" y="0">S</tspan><tspan class="sgl-18" x="14.79" y="0">A</tspan><tspan class="sgl-14" x="33.06" y="0">-11</tspan></text>
+      <text class="sgl-4" transform="translate(1212.8196 963.4573)"><tspan x="0" y="0">AN-7</tspan></text>
+    </g>
+  </g>
+</svg>
