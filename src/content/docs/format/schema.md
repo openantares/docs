@@ -28,6 +28,11 @@ Decompress a `.ant` file (it is a standard zstd stream) and validate each line a
 
 ## The schema
 
+The complete document, exactly as served at the `$id` URL:
+
+<details>
+<summary>Show the full schema (~840 lines)</summary>
+
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -871,3 +876,5 @@ Decompress a `.ant` file (it is a standard zstd stream) and validate each line a
   }
 }
 ```
+
+</details>
