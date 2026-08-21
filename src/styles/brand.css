@@ -83,9 +83,19 @@
 	font-family: var(--sl-font-mono);
 }
 
-/* Footer illustration — city-map plate above the default footer. */
+/* Cards: one accent per composition — no rainbow icon plates.
+ * Starlight cycles card colors; hold every card to neutral graphite. */
+.card {
+	--sl-card-border: var(--sl-color-gray-3);
+	--sl-card-bg: var(--sl-color-gray-6);
+}
+
+/* Footer illustration — a low, wide crop of the city map above the
+ * default footer. The theme-hide rules are restated here because this
+ * stylesheet is unlayered and would otherwise override Starlight's
+ * layered `light:sl-hidden` / `dark:sl-hidden` utilities. */
 .footer-illustration {
-	margin-top: 3rem;
+	margin-top: 4rem;
 	border-top: 1px solid var(--sl-color-hairline-light);
 	padding-top: 1.5rem;
 }
@@ -93,7 +103,13 @@
 	display: block;
 	margin-inline: auto;
 	width: 100%;
-	max-width: 28rem;
-	height: auto;
-	opacity: 0.85;
+	max-width: 44rem;
+	height: 11rem;
+	object-fit: cover;
+	object-position: center 38%;
+	opacity: 0.8;
+}
+[data-theme='dark'] .footer-illustration img.dark\:sl-hidden,
+[data-theme='light'] .footer-illustration img.light\:sl-hidden {
+	display: none;
 }

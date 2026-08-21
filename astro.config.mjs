@@ -4,9 +4,9 @@ import starlight from '@astrojs/starlight';
 import starlightLlmsTxt from 'starlight-llms-txt';
 
 const SITE = 'https://openantares.org';
-// Pre-DNS phase: the site is served at openantares.github.io/docs.
-// BASE flips to '/' when the openantares.org custom domain goes live.
-const BASE = '/docs';
+// Served at the openantares.org custom domain (site root). Before the
+// domain was configured this was '/docs' for openantares.github.io/docs.
+const BASE = '/';
 // Site-wide default social card; pages can override it by declaring their
 // own og:image/twitter:image tags in `head` frontmatter.
 const OG_IMAGE = `${SITE}${BASE === '/' ? '' : BASE}/og-default.png`;
