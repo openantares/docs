@@ -67,20 +67,18 @@
 	width: auto;
 }
 
-/* Hero illustration (stars graph) — flat field, no decoration beyond it. */
-.hero-illustration {
-	margin-inline: auto;
-	max-width: 46rem;
+/* Hero illustration (stars graph) rides in the hero's image slot; let the
+ * wide chart use the full column instead of Starlight's square-logo cap. */
+.hero > img,
+.hero > .sl-flex img {
+	width: min(100%, 34rem);
+	max-width: none;
 }
-.hero-illustration svg {
-	display: block;
-	width: 100%;
-	height: auto;
-}
-/* The illustration labels ride in the page's data face if the original
- * face is unavailable — never a serif fallback. */
-.hero-illustration svg text {
-	font-family: var(--sl-font-mono);
+
+/* Starlight's splash hero floats in up to 10rem of padding at large
+ * viewports; hold it closer to the content that follows. */
+.hero {
+	padding-block: clamp(2.5rem, calc(1rem + 6vmin), 5rem) clamp(1.5rem, 4vmin, 3rem);
 }
 
 /* Cards: one accent per composition — no rainbow icon plates.
