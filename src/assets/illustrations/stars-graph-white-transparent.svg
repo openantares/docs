@@ -11,7 +11,7 @@
       }
 
       .sgd-1, .sgd-2, .sgd-3, .sgd-4 {
-        font-family: MyriadPro-Regular, 'Myriad Pro';
+        font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
       }
 
       .sgd-5 {

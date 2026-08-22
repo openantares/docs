@@ -7,7 +7,7 @@
       }
 
       .sgl-1, .sgl-2, .sgl-3, .sgl-4 {
-        font-family: MyriadPro-Regular, 'Myriad Pro';
+        font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
       }
 
       .sgl-1, .sgl-4 {
