@@ -13,6 +13,8 @@ Conformance is decided by bytes, not prose: golden `.ant` files produced by the 
 | [`forward_compat.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/forward_compat.ant) | carries a `hologram` record — an unknown kind a reader must skip while still verifying the trailer |
 | [`tombstones.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/tombstones.ant) | `vertex_tombstone` / `edge_tombstone` records must surface as records and be counted — a binding that treats them as unknown kinds still verifies the file while dropping every deletion on the floor |
 | [`major_version.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/major_version.ant) | **negative.** Declares format v1.0 and is valid in every other respect; a 0.x reader must refuse it for the version and nothing else |
+| [`contradiction_cases.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/contradiction_cases.ant) | (v0.4) four `contradiction_case` records with the vertices, observations, evidence and belief they reference — a reader must surface the kind rather than skip it, and `expected.json` pins the epistemic and workflow states it reports |
+| [`relationship_proposals.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/relationship_proposals.ant) | (v0.5) three `relationship_proposal` records beside the five evidence records they cite — surfaced and counted as `relationshipProposals` in the trailer |
 | [`expected.json`](https://github.com/openantares/ant/blob/main/conformance/golden/expected.json) / [`expected_negatives.json`](https://github.com/openantares/ant/blob/main/conformance/golden/expected_negatives.json) | the expected manifest scope, record sequences, counts — and which fixtures must be rejected, with why |
 
 ## The three runners
@@ -22,24 +24,25 @@ Conformance is decided by bytes, not prose: golden `.ant` files produced by the 
 **Python and JavaScript.** Both runners work against the goldens as checked in, with no other setup:
 
 ```sh
-# Python reference binding. `pip install zstandard`; `jsonschema` is
-# optional and adds per-line validation against the JSON Schema.
+# Python reference binding. `pip install zstandard jsonschema` — the
+# per-line validation against the JSON Schema is a required check, not
+# an optional one: a missing `jsonschema` is a failed check.
 python3 conformance/run_conformance.py
 
 # JavaScript reference binding. Node >= 22.15 (native zstd in node:zlib).
 node conformance/run_conformance.mjs
 ```
 
-Both suites pass — run on 2026-08-21 against the published goldens:
+Both suites pass — run on 2026-09-14 against the published goldens at `v0.5.0`:
 
 ```text
 $ python3 conformance/run_conformance.py
 ...
-29/29 checks passed
+51/51 checks passed
 
 $ node conformance/run_conformance.mjs
 ...
-27/27 checks passed
+44/44 checks passed
 ```
 
 ## What a conformant implementation must do
@@ -52,7 +55,9 @@ The runners are the executable form of this contract. Every implementation must:
 4. surface tombstones as records and count them (`tombstones.ant`),
 5. reject the negative goldens listed in `golden/expected_negatives.json`,
 6. read a file whose MINOR is ahead of the reader, and report that it saw a subset — this is the rule most often implemented as `version == "0.2"`, which passes every positive test while being wrong,
-7. reject the synthesized negatives: tampered record bytes, missing trailer, chopped compressed stream, data after the trailer, wrong counts, a different MAJOR version, an unparsable version, non-zstd input.
+7. reject the synthesized negatives: tampered record bytes, missing trailer, chopped compressed stream, data after the trailer, wrong counts, a different MAJOR version, an unparsable version, non-zstd input,
+8. read `contradiction_cases.ant` (v0.4) and surface every `contradiction_case` record — a binding that skips the kind as unknown still verifies the file, so `expected.json` pins the record sequence and the epistemic and workflow states the binding reports,
+9. ignore trailer count keys it does not know — they count kinds it skipped — while defaulting later-version keys it does know to zero.
 
 **Proving a third-party implementation** means passing this list against these goldens: port one of the runners (they are small, single-file programs) to drive your reader, or drive it directly from `expected.json` and `expected_negatives.json`.
 

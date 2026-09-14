@@ -35,7 +35,7 @@ As a CLI, against a golden from the conformance suite:
 
 ```text
 $ python3 bindings/python/openantares.py validate conformance/golden/basic.ant
-conformance/golden/basic.ant: OK  version=0.3 records=7 skipped=0 counts={'schemaTypes': 0, 'vertices': 2, 'edges': 1, 'observations': 1, 'evidence': 1, 'beliefs': 1, 'vectors': 1, 'vertexTombstones': 0, 'edgeTombstones': 0}
+conformance/golden/basic.ant: OK  version=0.5 records=7 skipped=0 counts={'schemaTypes': 0, 'vertices': 2, 'edges': 1, 'observations': 1, 'evidence': 1, 'beliefs': 1, 'vectors': 1, 'vertexTombstones': 0, 'edgeTombstones': 0, 'contradictionCases': 0, 'relationshipProposals': 0}
 $ echo $?
 0
 ```
@@ -56,7 +56,7 @@ As a CLI:
 
 ```text
 $ node bindings/js/openantares.mjs validate conformance/golden/basic.ant
-conformance/golden/basic.ant: OK  version=0.3 records=7 skipped=0 counts={"schemaTypes":0,"vertices":2,"edges":1,"observations":1,"evidence":1,"beliefs":1,"vectors":1,"vertexTombstones":0,"edgeTombstones":0}
+conformance/golden/basic.ant: OK  version=0.5 records=7 skipped=0 counts={"schemaTypes":0,"vertices":2,"edges":1,"observations":1,"evidence":1,"beliefs":1,"vectors":1,"vertexTombstones":0,"edgeTombstones":0,"contradictionCases":0,"relationshipProposals":0}
 $ echo $?
 0
 ```

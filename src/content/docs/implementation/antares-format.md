@@ -115,14 +115,14 @@ Output:
 vertex  deal_1 (Demo.Deal)
         exact_amount = 12345678901234567.89 (exact decimal)
 evidence ev1: The deal was signed on the call.
-verified .ant, format version 0.3 (this build supports 0.3.x)
+verified .ant, format version 0.5 (this build supports 0.5.x)
 ```
 
 The file it wrote is a real, spec-complete `.ant` — the [CLI](../../cli/) validates it:
 
 ```text
 $ openantares validate hello.ant
-hello.ant: OK  version=0.3 records=2
+hello.ant: OK  version=0.5 records=2
 ```
 
 ## The API surface
