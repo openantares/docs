@@ -1,6 +1,6 @@
 ---
 title: "JSON Schema"
-description: The machine-readable JSON Schema for .ant records, served byte-for-byte at its normative $id URL — openantares.org/schema/ant-0.1.schema.json.
+description: The machine-readable JSON Schema for .ant records, served byte-for-byte at its normative $id URL — openantares.org/schema/ant.schema.json.
 ---
 
 The `.ant` format ships a [JSON Schema (draft 2020-12)](https://json-schema.org/) describing **one decompressed NDJSON line** of a `.ant` stream — every record kind, the trailer's count vocabulary, and the full typed property-value grammar. Container-level rules (manifest first, trailer last, the SHA-256 over preceding lines) cannot be expressed per-line and live in the [specification](../spec/), which owns them.
@@ -10,14 +10,16 @@ The `.ant` format ships a [JSON Schema (draft 2020-12)](https://json-schema.org/
 The schema's `$id` is:
 
 ```text
-https://openantares.org/schema/ant-0.1.schema.json
+https://openantares.org/schema/ant.schema.json
 ```
 
 That URL is the schema's permanent identifier — it is what the published crates and bindings reference — and this site serves the schema document at exactly that path, byte-for-byte identical to [`schema/ant.schema.json`](https://github.com/openantares/ant/blob/main/schema/ant.schema.json) in the `openantares/ant` repository:
 
 ```sh
-curl https://openantares.org/schema/ant-0.1.schema.json
+curl https://openantares.org/schema/ant.schema.json
 ```
+
+Earlier releases were published under a versioned name, `ant-0.1.schema.json`; that document stays served for anything still referencing it, but the unversioned `$id` above is the identifier every current release carries — the schema for format 0.5 lives there today, and a later minor replaces it in place.
 
 ## Using it
 
@@ -31,13 +33,13 @@ Decompress a `.ant` file (it is a standard zstd stream) and validate each line a
 The complete document, exactly as served at the `$id` URL:
 
 <details>
-<summary>Show the full schema (~840 lines)</summary>
+<summary>Show the full schema (~1,200 lines)</summary>
 
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openantares.org/schema/ant-0.1.schema.json",
-  "title": "OpenAntares .ant record (format 0.1)",
+  "$id": "https://openantares.org/schema/ant.schema.json",
+  "title": "OpenAntares .ant record (format 0.5)",
   "description": "Schema for ONE decompressed NDJSON line of a .ant stream. The container-level rules (manifest first, trailer last, sha256 over preceding lines) live in SPEC.md and cannot be expressed per-line.",
   "type": "object",
   "required": [
@@ -76,6 +78,12 @@ The complete document, exactly as served at the `$id` URL:
     },
     {
       "$ref": "#/$defs/edge_tombstone"
+    },
+    {
+      "$ref": "#/$defs/contradiction_case"
+    },
+    {
+      "$ref": "#/$defs/relationship_proposal"
     },
     {
       "$ref": "#/$defs/unknown_kind"
@@ -526,6 +534,18 @@ The complete document, exactly as served at the `$id` URL:
               "minimum": 0,
               "default": 0,
               "description": "Added in v0.2. Absent in a v0.1 trailer, where it means zero \u2014 readers MUST default it rather than reject the older file."
+            },
+            "contradictionCases": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "description": "Added in v0.4. Absent in a trailer written before v0.4, where it means zero \u2014 readers MUST default it rather than reject the older file."
+            },
+            "relationshipProposals": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "description": "Added in v0.5. Absent in a trailer written before v0.5, where it means zero \u2014 readers MUST default it rather than reject the older file."
             }
           },
           "additionalProperties": false
@@ -538,7 +558,7 @@ The complete document, exactly as served at the `$id` URL:
       "additionalProperties": true
     },
     "unknown_kind": {
-      "description": "Forward compatibility: any object with a string `kind` outside the v0.2 vocabulary is valid at the container level and MUST be skipped by readers.",
+      "description": "Forward compatibility: any object with a string `kind` outside the v0.5 vocabulary is valid at the container level and MUST be skipped by readers.",
       "type": "object",
       "required": [
         "kind"
@@ -558,7 +578,9 @@ The complete document, exactly as served at the `$id` URL:
               "vector",
               "trailer",
               "vertex_tombstone",
-              "edge_tombstone"
+              "edge_tombstone",
+              "contradiction_case",
+              "relationship_proposal"
             ]
           }
         }
@@ -661,6 +683,150 @@ The complete document, exactly as served at the `$id` URL:
             "author": {
               "$ref": "#/$defs/author_stamp"
             }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "source_pointer": {
+      "description": "v0.4. A position inside an evidence record: character span, byte span, JSON pointer path, or any combination.",
+      "type": "object",
+      "properties": {
+        "charStart": { "type": "integer", "minimum": 0 },
+        "charEnd": { "type": "integer", "minimum": 0 },
+        "byteStart": { "type": "integer", "minimum": 0 },
+        "byteEnd": { "type": "integer", "minimum": 0 },
+        "path": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "claim_ref": {
+      "description": "v0.4. One exact claim revision a case compares. `version` pins a belief version; `pointer` locates an evidence claim.",
+      "type": "object",
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["belief", "observation", "evidence"] },
+        "id": { "type": "string" },
+        "version": { "type": "integer", "minimum": 0 },
+        "pointer": { "$ref": "#/$defs/source_pointer" }
+      },
+      "additionalProperties": true
+    },
+    "evidence_ref": {
+      "description": "v0.4. A source position the case relies on.",
+      "type": "object",
+      "required": ["evidenceId"],
+      "properties": {
+        "evidenceId": { "type": "string" },
+        "pointer": { "$ref": "#/$defs/source_pointer" }
+      },
+      "additionalProperties": true
+    },
+    "material": {
+      "description": "v0.4. Supporting or refuting material with its source dependency: a forwarded copy or a derivation is not an independent witness of the source it names in `of`.",
+      "type": "object",
+      "required": ["evidenceId", "dependency"],
+      "properties": {
+        "evidenceId": { "type": "string" },
+        "pointer": { "$ref": "#/$defs/source_pointer" },
+        "dependency": {
+          "type": "object",
+          "required": ["kind"],
+          "properties": {
+            "kind": { "type": "string", "enum": ["independent", "forwardedCopy", "derived"] },
+            "of": { "type": "string" }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "contradiction_case": {
+      "description": "v0.4. One immutable revision of a contradiction case: two or more exact claim revisions compared, with epistemic, business-impact and workflow state kept separate. Payload is camelCase. Every id it references MUST resolve inside the same file, and a previous revision MUST precede its successor (SPEC.md §5.2).",
+      "type": "object",
+      "required": ["kind", "data"],
+      "properties": {
+        "kind": { "const": "contradiction_case" },
+        "data": {
+          "type": "object",
+          "required": [
+            "id", "caseId", "tenantId", "projectId", "family", "claims",
+            "comparator", "epistemic", "impact", "workflow", "revisedAt"
+          ],
+          "properties": {
+            "id": { "type": "string" },
+            "caseId": { "type": "string" },
+            "previousRevisionId": { "type": "string" },
+            "tenantId": { "type": "integer" },
+            "projectId": { "type": "integer" },
+            "family": { "type": "string" },
+            "claims": {
+              "type": "array",
+              "minItems": 2,
+              "items": { "$ref": "#/$defs/claim_ref" }
+            },
+            "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence_ref" } },
+            "measurements": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "value"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "value": {},
+                  "unit": { "type": "string" },
+                  "evidenceId": { "type": "string" },
+                  "pointer": { "$ref": "#/$defs/source_pointer" }
+                },
+                "additionalProperties": true
+              }
+            },
+            "comparator": {
+              "type": "object",
+              "required": ["comparator", "comparatorVersion"],
+              "properties": {
+                "comparator": { "type": "string" },
+                "comparatorVersion": { "type": "string" },
+                "ruleId": { "type": "string" },
+                "ruleVersion": { "type": "string" },
+                "model": { "type": "string" },
+                "modelVersion": { "type": "string" },
+                "snapshotId": { "type": "string" }
+              },
+              "additionalProperties": true
+            },
+            "supporting": { "type": "array", "items": { "$ref": "#/$defs/material" } },
+            "refuting": { "type": "array", "items": { "$ref": "#/$defs/material" } },
+            "vaultOccurrences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["vaultId", "itemId"],
+                "properties": {
+                  "vaultId": { "type": "string" },
+                  "itemId": { "type": "string" },
+                  "revision": { "type": "string" },
+                  "pointer": { "$ref": "#/$defs/source_pointer" },
+                  "conditions": { "type": "array", "items": { "type": "string" } }
+                },
+                "additionalProperties": true
+              }
+            },
+            "epistemic": {
+              "type": "string",
+              "enum": ["incompatible", "compatible", "uncertain", "insufficiently_comparable"]
+            },
+            "impact": { "type": "string", "enum": ["harmful", "alignment_only", "unassessed"] },
+            "workflow": {
+              "type": "string",
+              "enum": ["open", "awaiting_clarification", "awaiting_review", "contested", "deferred", "settled", "reopened"]
+            },
+            "proposalId": { "type": "string" },
+            "reviewReceipts": { "type": "array", "items": { "type": "string" } },
+            "revisedAt": { "type": "string", "format": "date-time" },
+            "author": { "$ref": "#/$defs/author_stamp" },
+            "metadata": {}
           },
           "additionalProperties": true
         }
@@ -872,6 +1038,209 @@ The complete document, exactly as served at the `$id` URL:
           }
         }
       ]
+    },
+    "sampling": {
+      "description": "v0.5. The sample a measurement was taken over, described well enough to be taken again. The conditions below are the rule, not decoration: a sampled measurement nobody can take again is not evidence, and a full scan has no sample to describe.",
+      "type": "object",
+      "required": ["method"],
+      "properties": {
+        "method": {
+          "enum": ["full_scan", "system_repeatable", "bernoulli_repeatable", "capped_prefix"]
+        },
+        "percent": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+        "seed": { "type": "integer" },
+        "cap": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": { "properties": { "method": { "const": "full_scan" } }, "required": ["method"] },
+          "then": { "properties": { "percent": false, "seed": false, "cap": false } }
+        },
+        {
+          "if": {
+            "properties": { "method": { "enum": ["system_repeatable", "bernoulli_repeatable"] } },
+            "required": ["method"]
+          },
+          "then": { "required": ["percent", "seed"] }
+        },
+        {
+          "if": { "properties": { "method": { "const": "capped_prefix" } }, "required": ["method"] },
+          "then": { "required": ["cap"] }
+        }
+      ]
+    },
+    "relation_support": {
+      "description": "v0.5. The measurement behind a proposed relationship (the mapper's evidence contract): the denominator, the numerator, the target side's uniqueness, how it was sampled, a fingerprint tying it to the run, and the threshold it was judged against. A ratio without the bar it cleared is not a claim.",
+      "type": "object",
+      "required": [
+        "contractVersion", "method", "methodVersion", "sourceRows", "sourceNonNull",
+        "matchedRows", "targetRows", "targetNonNull", "targetDistinct", "sampling",
+        "fingerprint", "minSupport"
+      ],
+      "properties": {
+        "contractVersion": { "type": "integer", "minimum": 1 },
+        "method": { "enum": ["join_match_scan"] },
+        "methodVersion": { "type": "integer", "minimum": 0 },
+        "sourceRows": { "type": "integer", "minimum": 0 },
+        "sourceNonNull": { "type": "integer", "minimum": 0 },
+        "matchedRows": { "type": "integer", "minimum": 0 },
+        "targetRows": { "type": "integer", "minimum": 0 },
+        "targetNonNull": { "type": "integer", "minimum": 0 },
+        "targetDistinct": { "type": "integer", "minimum": 0 },
+        "sampling": { "$ref": "#/$defs/sampling" },
+        "fingerprint": { "type": "string", "minLength": 1 },
+        "minSupport": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "normalization_op": {
+      "description": "v0.5. An executable operator with exact PostgreSQL semantics, applied to one side of a join before matching. A cast is the object form; the rest are strings.",
+      "oneOf": [
+        { "enum": ["trim", "lower", "trim_lower"] },
+        {
+          "type": "object",
+          "required": ["cast"],
+          "properties": {
+            "cast": { "enum": ["text", "bigint", "numeric", "uuid", "date", "timestamptz"] }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "normalization": {
+      "description": "v0.5. What is applied to the source key and what is applied to the target key. Two operators, not one: `target` defaults to `source`. The export RESOLVES the normalized source value among the normalized target keys; it never transforms a source string into a target id.",
+      "type": "object",
+      "required": ["source"],
+      "properties": {
+        "source": { "$ref": "#/$defs/normalization_op" },
+        "target": { "$ref": "#/$defs/normalization_op" }
+      },
+      "additionalProperties": false
+    },
+    "proposed_relation": {
+      "description": "v0.5. The relationship being proposed: which types, which relations, which columns, and what is applied to both sides before they are compared. The key column lists have the same length \u2014 a join compares one column to one column.",
+      "type": "object",
+      "required": [
+        "subjectType", "predicate", "targetType", "sourceRelation",
+        "sourceKeyColumns", "targetRelation", "targetKeyColumns"
+      ],
+      "properties": {
+        "subjectType": { "type": "string", "minLength": 1 },
+        "predicate": { "type": "string", "minLength": 1 },
+        "targetType": { "type": "string", "minLength": 1 },
+        "sourceRelation": { "type": "string", "minLength": 1 },
+        "sourceKeyColumns": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "targetRelation": { "type": "string", "minLength": 1 },
+        "targetKeyColumns": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "normalization": { "$ref": "#/$defs/normalization" }
+      },
+      "additionalProperties": true
+    },
+    "source_manifest_ref": {
+      "description": "v0.5. The source the run read, pinned by hash. Without it a later reader cannot tell whether the source has moved under the proposal.",
+      "type": "object",
+      "required": ["connection", "planHash"],
+      "properties": {
+        "connection": { "type": "string", "minLength": 1 },
+        "planHash": { "type": "string", "minLength": 1 },
+        "catalogHash": { "type": "string" },
+        "policyVersion": { "type": "integer", "minimum": 0 },
+        "policyHash": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "proposal_origin": {
+      "description": "v0.5. The run and the loop version that produced the proposal, and the source manifest it read. A model that suggested the join is recorded so its suggestions can be graded \u2014 the measurement is still what decides.",
+      "type": "object",
+      "required": ["runId", "reconVersion", "sourceManifest"],
+      "properties": {
+        "runId": { "type": "string", "minLength": 1 },
+        "reconVersion": { "type": "string", "minLength": 1 },
+        "sourceManifest": { "$ref": "#/$defs/source_manifest_ref" },
+        "model": { "type": "string" },
+        "modelVersion": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "probe_ref": {
+      "description": "v0.5. One SQL probe the loop ran, kept so the measurement can be re-derived rather than believed. `statement` is the statement AS EXECUTED, parameterized \u2014 never with customer values inlined. `evidenceId`, when present, MUST resolve inside the file.",
+      "type": "object",
+      "required": ["name", "statement", "dialect"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "statement": { "type": "string", "minLength": 1 },
+        "dialect": { "type": "string", "minLength": 1 },
+        "ranAt": { "type": "string", "format": "date-time" },
+        "evidenceId": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "reviewer_receipt": {
+      "description": "v0.5. Who promoted a proposal, when, why, and the evidence record holding the receipt. Every field is required: an unattributed promotion is nobody's decision, and `receipt` MUST resolve inside the file.",
+      "type": "object",
+      "required": ["reviewer", "decidedAt", "reason", "receipt"],
+      "properties": {
+        "reviewer": { "type": "string", "minLength": 1 },
+        "decidedAt": { "type": "string", "format": "date-time" },
+        "reason": { "type": "string", "minLength": 1 },
+        "receipt": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    },
+    "relationship_proposal": {
+      "description": "v0.5. One immutable revision of a relationship proposal: what a reconnaissance run proposed about a source, the measurement behind it, the probes that took it, and where it stands. Payload is camelCase. `status` is a flattened tag: `quarantined_hypothesis` and `refuted` carry `reason`, `promoted_by_reviewer` carries `receipt`, `supported` carries neither \u2014 and a `supported` proposal's own measurement MUST clear its own `minSupport` (SPEC.md \u00a75.3). Every id it references MUST resolve inside the same file, and a previous revision MUST precede its successor. Recording a proposal never publishes it into a mapping.",
+      "type": "object",
+      "required": ["kind", "data"],
+      "properties": {
+        "kind": { "const": "relationship_proposal" },
+        "data": {
+          "type": "object",
+          "required": [
+            "id", "proposalId", "tenantId", "projectId", "origin", "relation",
+            "support", "status", "proposedAt"
+          ],
+          "properties": {
+            "id": { "type": "string" },
+            "proposalId": { "type": "string" },
+            "previousRevisionId": { "type": "string" },
+            "tenantId": { "type": "integer" },
+            "projectId": { "type": "integer" },
+            "origin": { "$ref": "#/$defs/proposal_origin" },
+            "relation": { "$ref": "#/$defs/proposed_relation" },
+            "support": { "$ref": "#/$defs/relation_support" },
+            "status": {
+              "enum": ["quarantined_hypothesis", "supported", "promoted_by_reviewer", "refuted"]
+            },
+            "reason": { "type": "string", "minLength": 1 },
+            "receipt": { "$ref": "#/$defs/reviewer_receipt" },
+            "findings": { "type": "array", "items": { "type": "string" } },
+            "probes": { "type": "array", "items": { "$ref": "#/$defs/probe_ref" } },
+            "proposedAt": { "type": "string", "format": "date-time" },
+            "author": { "$ref": "#/$defs/author_stamp" },
+            "metadata": { "type": "object" }
+          },
+          "allOf": [
+            {
+              "if": { "properties": { "status": { "const": "promoted_by_reviewer" } },
+                       "required": ["status"] },
+              "then": { "required": ["receipt"] }
+            },
+            {
+              "if": { "properties": { "status": { "const": "quarantined_hypothesis" } },
+                       "required": ["status"] },
+              "then": { "required": ["reason"] }
+            },
+            {
+              "if": { "properties": { "status": { "const": "refuted" } },
+                       "required": ["status"] },
+              "then": { "required": ["reason"] }
+            }
+          ],
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     }
   }
 }
