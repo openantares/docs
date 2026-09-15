@@ -15,6 +15,7 @@ Conformance is decided by bytes, not prose: golden `.ant` files produced by the 
 | [`major_version.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/major_version.ant) | **negative.** Declares format v1.0 and is valid in every other respect; a 0.x reader must refuse it for the version and nothing else |
 | [`contradiction_cases.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/contradiction_cases.ant) | (v0.4) four `contradiction_case` records with the vertices, observations, evidence and belief they reference — a reader must surface the kind rather than skip it, and `expected.json` pins the epistemic and workflow states it reports |
 | [`relationship_proposals.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/relationship_proposals.ant) | (v0.5) three `relationship_proposal` records beside the five evidence records they cite — surfaced and counted as `relationshipProposals` in the trailer |
+| [`unknown_time.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/unknown_time.ant) | (v0.6) two observations: one whose event time is explicitly unknown (`{"unknown":{"reason":…}}`) beside one whose provenance time carries a basis — a reader must surface both forms, never substitute an instant, and read a bare string as a Known time with no basis |
 | [`expected.json`](https://github.com/openantares/ant/blob/main/conformance/golden/expected.json) / [`expected_negatives.json`](https://github.com/openantares/ant/blob/main/conformance/golden/expected_negatives.json) | the expected manifest scope, record sequences, counts — and which fixtures must be rejected, with why |
 
 ## The three runners
@@ -33,16 +34,16 @@ python3 conformance/run_conformance.py
 node conformance/run_conformance.mjs
 ```
 
-Both suites pass — run on 2026-09-14 against the published goldens at `v0.5.0`:
+Both suites pass — run on 2026-09-15 against the published goldens at `v0.6.0`:
 
 ```text
 $ python3 conformance/run_conformance.py
 ...
-51/51 checks passed
+72/72 checks passed
 
 $ node conformance/run_conformance.mjs
 ...
-44/44 checks passed
+52/52 checks passed
 ```
 
 ## What a conformant implementation must do

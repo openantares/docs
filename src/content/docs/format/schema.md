@@ -19,7 +19,7 @@ Since format 0.5 the document is **generated from the canonical implementation's
 curl https://openantares.org/schema/ant.schema.json
 ```
 
-Earlier releases were published under a versioned name, `ant-0.1.schema.json`; that document stays served for anything still referencing it, but the unversioned `$id` above is the identifier every current release carries — the schema for format 0.5 lives there today, and a later minor replaces it in place.
+Earlier releases were published under a versioned name, `ant-0.1.schema.json`; that document stays served for anything still referencing it, but the unversioned `$id` above is the identifier every current release carries — the schema for format 0.6 lives there today, and a later minor replaces it in place.
 
 ## Using it
 
@@ -33,13 +33,13 @@ Decompress a `.ant` file (it is a standard zstd stream) and validate each line a
 The complete document, exactly as served at the `$id` URL:
 
 <details>
-<summary>Show the full schema (~2,800 lines)</summary>
+<summary>Show the full schema (~2,900 lines)</summary>
 
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://openantares.org/schema/ant.schema.json",
-  "title": "OpenAntares .ant record (format 0.5)",
+  "title": "OpenAntares .ant record (format 0.6)",
   "description": "Schema for ONE decompressed NDJSON line of a .ant stream. The container-level rules (manifest first, trailer last, sha256 over preceding lines) live in SPEC.md and cannot be expressed per-line.",
   "type": "object",
   "required": [
@@ -840,6 +840,42 @@ The complete document, exactly as served at the `$id` URL:
       },
       "additionalProperties": true
     },
+    "event_time": {
+      "description": "Schema shadow: the generated JSON Schema is a `oneOf` of the three wire forms above. Kept in lockstep with the manual serde by shape.",
+      "anyOf": [
+        {
+          "description": "A Known time with no basis — an RFC3339 string.",
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "description": "A Known time with a recorded basis.",
+          "type": "object",
+          "required": [
+            "known"
+          ],
+          "properties": {
+            "known": {
+              "$ref": "#/$defs/known_body_schema"
+            }
+          },
+          "additionalProperties": true
+        },
+        {
+          "description": "An explicitly-unknown time.",
+          "type": "object",
+          "required": [
+            "unknown"
+          ],
+          "properties": {
+            "unknown": {
+              "$ref": "#/$defs/unknown_body_schema"
+            }
+          },
+          "additionalProperties": true
+        }
+      ]
+    },
     "evidence": {
       "description": "An evidence record.",
       "type": "object",
@@ -1003,6 +1039,40 @@ The complete document, exactly as served at the `$id` URL:
             },
             {
               "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "known_body_schema": {
+      "type": "object",
+      "required": [
+        "at",
+        "basis"
+      ],
+      "properties": {
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "basis": {
+          "description": "How a KNOWN time was arrived at. Provenance time populated from an extraction receipt carries its basis; a dated event time from a legacy record carries none. Aligned with the server's `TimeBasis` (PRODUCT-209).",
+          "oneOf": [
+            {
+              "description": "The source record's own recorded time.",
+              "type": "string",
+              "const": "source_record_time"
+            },
+            {
+              "description": "A business date the source statement itself carries.",
+              "type": "string",
+              "const": "asserted_valid_from"
+            },
+            {
+              "description": "A native source field an operator explicitly bound to time.",
+              "type": "string",
+              "const": "source_field_binding"
             }
           ]
         }
@@ -1276,9 +1346,8 @@ The complete document, exactly as served at the `$id` URL:
               }
             },
             "extracted_at": {
-              "description": "Wall-clock time the extractor produced this observation.",
-              "type": "string",
-              "format": "date-time"
+              "description": "When the extractor produced this observation — the PROVENANCE time. Same shape; a producer may populate it from an extraction receipt with a [`crate::TimeBasis`]. Explicitly unknown when the producer recorded no such time.",
+              "$ref": "#/$defs/event_time"
             },
             "extractor_version": {
               "description": "Version tag of the producing extractor, verbatim.",
@@ -1305,9 +1374,8 @@ The complete document, exactly as served at the `$id` URL:
               "description": "Object as a literal value when the observation isn't relational (e.g. \"SOC2 was mentioned\" → object_value = \"SOC2\"; \"page opens count\" → object_value = 5)."
             },
             "observed_at": {
-              "description": "Wall-clock time the underlying event happened.",
-              "type": "string",
-              "format": "date-time"
+              "description": "When the underlying event happened — the EVENT time. Either a real instant or explicitly [`EventTime::Unknown`] with a reason; a dateless original carries the reason and nothing ever fabricates an instant for it (PRODUCT-231). Serializes as the bare v0.5 timestamp string when known without a basis.",
+              "$ref": "#/$defs/event_time"
             },
             "predicate": {
               "description": "What was observed about the subject. Free-form string — common values include \"joined_review\", \"mentioned_topic\", \"viewed\", \"opened_email\", \"forwarded_to\", \"went_silent\", \"usage_dropped\".",
@@ -2496,8 +2564,47 @@ The complete document, exactly as served at the `$id` URL:
       },
       "additionalProperties": true
     },
+    "unknown_body_schema": {
+      "type": "object",
+      "required": [
+        "reason"
+      ],
+      "properties": {
+        "reason": {
+          "description": "Why a time has no usable instant. Each reason is REPORTED, never papered over with a substitute timestamp. Aligned with the server's `UnknownTime` (PRODUCT-209).",
+          "oneOf": [
+            {
+              "description": "The source carries no time at all.",
+              "type": "string",
+              "const": "no_source_time"
+            },
+            {
+              "description": "A statement about a step or fact that names no business date.",
+              "type": "string",
+              "const": "asserted_without_date"
+            },
+            {
+              "description": "A row describing what is true now. It cannot become a past transition, so it has no event time of its own.",
+              "type": "string",
+              "const": "current_state_only"
+            },
+            {
+              "description": "Several candidate times disagree and none is authoritative.",
+              "type": "string",
+              "const": "ambiguous_source_time"
+            },
+            {
+              "description": "The source stands in for \"no date\" with a placeholder far outside any business horizon (`1900-01-01`, `9999-12-31`, …). A placeholder is not an occurrence.",
+              "type": "string",
+              "const": "implausible_source_time"
+            }
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
     "unknown_kind": {
-      "description": "Forward compatibility: any object with a string `kind` outside the v0.5 vocabulary is valid at the container level and MUST be skipped by readers.",
+      "description": "Forward compatibility: any object with a string `kind` outside the v0.6 vocabulary is valid at the container level and MUST be skipped by readers.",
       "type": "object",
       "required": [
         "kind"
