@@ -69,7 +69,7 @@ $ echo $?
 $ openantares info basic.ant
 file:            basic.ant
 format:          antares
-format version:  0.6 (this build reads/writes 0.6.x)
+format version:  0.7 (this build reads/writes 0.7.x)
 tenant id:       1
 project id:      1
 producer:        openantares-conformance/0.1
@@ -88,6 +88,7 @@ counts:
   edge tombstones:   0
   contradiction cases: 0
   relationship proposals: 0
+  ontology revisions: 0
 ```
 
-The `(this build reads/writes 0.6.x)` note is [`SUPPORTED_FORMAT_VERSION`](../versioning/) speaking: when a file's minor version is ahead of the reader, both commands say so — the file verified, but this build saw a subset of what it means.
+The `(this build reads/writes 0.7.x)` note is [`SUPPORTED_FORMAT_VERSION`](../versioning/) speaking: when a file's minor version is ahead of the reader, both commands say so — the file verified, but this build saw a subset of what it means.

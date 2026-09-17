@@ -26,7 +26,7 @@ This example was built as the **first outside consumer** of the published crates
 :::
 
 ```rust
-// [dependencies]  ant-types = "0.1", antares-format = "0.1"
+// [dependencies]  ant-types = "0.5", antares-format = "0.5"
 use std::collections::BTreeMap;
 
 use ant_types::{
@@ -115,14 +115,14 @@ Output:
 vertex  deal_1 (Demo.Deal)
         exact_amount = 12345678901234567.89 (exact decimal)
 evidence ev1: The deal was signed on the call.
-verified .ant, format version 0.6 (this build supports 0.6.x)
+verified .ant, format version 0.7 (this build supports 0.7.x)
 ```
 
 The file it wrote is a real, spec-complete `.ant` — the [CLI](../../cli/) validates it:
 
 ```text
 $ openantares validate hello.ant
-hello.ant: OK  version=0.6 records=2
+hello.ant: OK  version=0.7 records=2
 ```
 
 ## The API surface

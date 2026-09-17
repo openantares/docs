@@ -1,9 +1,9 @@
 ---
 title: "Versioning: crates and format"
-description: Why the Rust crates are 0.4.x while the .ant format is 0.6.x — deliberately independent version lines, SUPPORTED_FORMAT_VERSION, and the same-major compatibility rule enforced at read time.
+description: Why the Rust crates are 0.5.x while the .ant format is 0.7.x — deliberately independent version lines, SUPPORTED_FORMAT_VERSION, and the same-major compatibility rule enforced at read time.
 ---
 
-**The crate version and the format version are deliberately not the same number.** The published crates are at `0.4.0`; the format they implement is `0.6`. This page exists so that difference reads as the design decision it is, not a mistake.
+**The crate version and the format version are deliberately not the same number.** The published crates are at `0.5.0`; the format they implement is `0.7`. This page exists so that difference reads as the design decision it is, not a mistake.
 
 ## Why they are independent
 
@@ -22,15 +22,15 @@ A **different MAJOR is refused at read time**, with an error naming both version
 
 | artifact | version | links |
 |----------|---------|-------|
-| `.ant` format | **0.6** | [specification](../format/spec/) · [v0.6.0 release](https://github.com/openantares/ant/releases/tag/v0.6.0) |
-| `ant-types` | 0.4.0 | [crates.io](https://crates.io/crates/ant-types) · [docs.rs](https://docs.rs/ant-types) |
-| `antares-format` | 0.4.0 | [crates.io](https://crates.io/crates/antares-format) · [docs.rs](https://docs.rs/antares-format) |
-| `openantares` (CLI) | 0.4.0 | [crates.io](https://crates.io/crates/openantares) · [docs.rs](https://docs.rs/openantares) |
+| `.ant` format | **0.7** | [specification](../format/spec/) · [v0.7.0 release](https://github.com/openantares/ant/releases/tag/v0.7.0) |
+| `ant-types` | 0.5.0 | [crates.io](https://crates.io/crates/ant-types) · [docs.rs](https://docs.rs/ant-types) |
+| `antares-format` | 0.5.0 | [crates.io](https://crates.io/crates/antares-format) · [docs.rs](https://docs.rs/antares-format) |
+| `openantares` (CLI) | 0.5.0 | [crates.io](https://crates.io/crates/openantares) · [docs.rs](https://docs.rs/openantares) |
 
 The JSON Schema keeps its own permanent identifier, [`https://openantares.org/schema/ant.schema.json`](../format/schema/), referenced by the crates and served on this site.
 
 `openantares info` shows both version lines at once — the file's format version and what the installed build supports:
 
 ```text
-format version:  0.6 (this build reads/writes 0.6.x)
+format version:  0.7 (this build reads/writes 0.7.x)
 ```

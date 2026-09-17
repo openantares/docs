@@ -16,6 +16,7 @@ Conformance is decided by bytes, not prose: golden `.ant` files produced by the 
 | [`contradiction_cases.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/contradiction_cases.ant) | (v0.4) four `contradiction_case` records with the vertices, observations, evidence and belief they reference — a reader must surface the kind rather than skip it, and `expected.json` pins the epistemic and workflow states it reports |
 | [`relationship_proposals.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/relationship_proposals.ant) | (v0.5) three `relationship_proposal` records beside the five evidence records they cite — surfaced and counted as `relationshipProposals` in the trailer |
 | [`unknown_time.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/unknown_time.ant) | (v0.6) two observations: one whose event time is explicitly unknown (`{"unknown":{"reason":…}}`) beside one whose provenance time carries a basis — a reader must surface both forms, never substitute an instant, and read a bare string as a Known time with no basis |
+| [`ontology_revisions.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/ontology_revisions.ant) | (v0.7) one `ontology_revision` record beside the evidence it publishes — the immutable elected semantic manifest. The runners assert its semantic id (`orv1:<manifestSha256>`), target vault, previous ontology head, typed item kinds and the `ontology/v1` / `ontology` conditional position, so an implementation cannot pass by skipping the kind; the fixture also pins the exact record/revision closure and the first-publisher envelope |
 | [`expected.json`](https://github.com/openantares/ant/blob/main/conformance/golden/expected.json) / [`expected_negatives.json`](https://github.com/openantares/ant/blob/main/conformance/golden/expected_negatives.json) | the expected manifest scope, record sequences, counts — and which fixtures must be rejected, with why |
 
 ## The three runners
@@ -34,16 +35,16 @@ python3 conformance/run_conformance.py
 node conformance/run_conformance.mjs
 ```
 
-Both suites pass — run on 2026-09-15 against the published goldens at `v0.6.0`:
+Both suites pass — run on 2026-09-17 against the published goldens at `v0.7.0`:
 
 ```text
 $ python3 conformance/run_conformance.py
 ...
-72/72 checks passed
+89/89 checks passed
 
 $ node conformance/run_conformance.mjs
 ...
-52/52 checks passed
+68/68 checks passed
 ```
 
 ## What a conformant implementation must do
@@ -59,6 +60,7 @@ The runners are the executable form of this contract. Every implementation must:
 7. reject the synthesized negatives: tampered record bytes, missing trailer, chopped compressed stream, data after the trailer, wrong counts, a different MAJOR version, an unparsable version, non-zstd input,
 8. read `contradiction_cases.ant` (v0.4) and surface every `contradiction_case` record — a binding that skips the kind as unknown still verifies the file, so `expected.json` pins the record sequence and the epistemic and workflow states the binding reports,
 9. ignore trailer count keys it does not know — they count kinds it skipped — while defaulting later-version keys it does know to zero.
+10. read `ontology_revisions.ant` (v0.7), surface the native `ontology_revision` record, and report its semantic id, target vault, previous head, semantic item kinds and conditional domain/chain — the fixture also pins the exact record/revision closure and the immutable first-publisher envelope.
 
 **Proving a third-party implementation** means passing this list against these goldens: port one of the runners (they are small, single-file programs) to drive your reader, or drive it directly from `expected.json` and `expected_negatives.json`.
 
