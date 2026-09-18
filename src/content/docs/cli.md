@@ -36,9 +36,9 @@ Every transcript below is real output, run against the [conformance golden files
 
 ```text
 $ openantares validate basic.ant forward_compat.ant tombstones.ant
-basic.ant: OK  version=0.3 records=7
-forward_compat.ant: OK  version=0.3 records=1
-tombstones.ant: OK  version=0.3 records=4
+basic.ant: OK  version=0.7 records=7
+forward_compat.ant: OK  version=0.7 records=1
+tombstones.ant: OK  version=0.7 records=4
 $ echo $?
 0
 ```
@@ -47,7 +47,7 @@ $ echo $?
 
 ```text
 $ openantares validate major_version.ant
-major_version.ant: FAIL  file is format v1.0, this reader implements v0.3. Major versions are not compatible: a major bump means field meanings or the container framing changed, so reading it here would silently misinterpret records. Upgrade the reader to a v1.x build, or re-export the file at v0.
+major_version.ant: FAIL  file is format v1.0, this reader implements v0.7. Major versions are not compatible: a major bump means field meanings or the container framing changed, so reading it here would silently misinterpret records. Upgrade the reader to a v1.x build, or re-export the file at v0.
 $ echo $?
 65
 ```
