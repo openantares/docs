@@ -131,6 +131,8 @@ hello.ant: OK  version=0.7 records=2
 
 - `AntWriter::new(out, manifest, level)` writes the manifest line into any `std::io::Write` sink (`level` is the zstd compression level, `0` = default).
 - `write(AntRecord)` appends one record; the writer keeps the running per-kind `Counts` and the running hash.
+
+**Records** — [`AntRecord`](https://docs.rs/antares-format/latest/antares_format/enum.AntRecord.html) has one variant per data kind: `SchemaType`, `Vertex`, `Edge`, `Observation`, `Evidence`, `Belief`, `Vector`, `VertexTombstone`, `EdgeTombstone` (0.2), `ContradictionCase` (0.4), `RelationshipProposal` (0.5) and `OntologyRevision` (0.7), plus the `Trailer`. The enum is matched exhaustively by consumers, which is why a format minor that adds a kind is a crate minor — see [Versioning](../../versioning/).
 - `finish()` appends the trailer (counts + SHA-256) and flushes the zstd frame, returning the sink.
 
 **Reader** — [`AntReader`](https://docs.rs/antares-format/latest/antares_format/struct.AntReader.html):

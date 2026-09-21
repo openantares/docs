@@ -21,7 +21,7 @@ hero:
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-`.ant` is an open, self-contained container format for exchanging knowledge graphs. A `.ant` file is a single zstd-compressed stream of newline-delimited JSON records: a manifest first, then schema types, vertices, edges, observations, evidence, beliefs, embedding vectors, and deletion tombstones in any order, then a trailer whose per-kind counts and SHA-256 hash make truncation or tampering detectable in one pass. The format is openly specified under Apache-2.0, versioned `MAJOR.MINOR` with a same-major compatibility guarantee, and small enough that a conformant reader is about a hundred lines in any language with zstd and SHA-256.
+`.ant` is an open, self-contained container format for exchanging knowledge graphs. A `.ant` file is a single zstd-compressed stream of newline-delimited JSON records: a manifest first, then schema types, vertices, edges, observations, evidence, beliefs, embedding vectors, deletion tombstones, contradiction cases, relationship proposals, and elected ontology revisions in any order, then a trailer whose per-kind counts and SHA-256 hash make truncation or tampering detectable in one pass. The format is openly specified under Apache-2.0, versioned `MAJOR.MINOR` with a same-major compatibility guarantee, and small enough that a conformant reader is about a hundred lines in any language with zstd and SHA-256.
 
 ## Quickstart
 
