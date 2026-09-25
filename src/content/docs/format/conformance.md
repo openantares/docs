@@ -12,11 +12,13 @@ Conformance is decided by bytes, not prose: golden `.ant` files produced by the 
 | [`basic.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/basic.ant) | one of everything — and the two rules implementations most often get wrong: `exact_amount` is a 19-digit decimal an IEEE double cannot hold, and `signed_at` carries a `+02:00` offset that must survive the read |
 | [`forward_compat.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/forward_compat.ant) | carries a `hologram` record — an unknown kind a reader must skip while still verifying the trailer |
 | [`tombstones.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/tombstones.ant) | `vertex_tombstone` / `edge_tombstone` records must surface as records and be counted — a binding that treats them as unknown kinds still verifies the file while dropping every deletion on the floor |
-| [`major_version.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/major_version.ant) | **negative.** Declares format v1.0 and is valid in every other respect; a 0.x reader must refuse it for the version and nothing else |
+| [`major_version.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/major_version.ant) | **negative.** Declares format v2.0 and is valid in every other respect; a reader of 0.x and 1.x must refuse it for the version and nothing else |
 | [`contradiction_cases.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/contradiction_cases.ant) | (v0.4) four `contradiction_case` records with the vertices, observations, evidence and belief they reference — a reader must surface the kind rather than skip it, and `expected.json` pins the epistemic and workflow states it reports |
 | [`relationship_proposals.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/relationship_proposals.ant) | (v0.5) three `relationship_proposal` records beside the five evidence records they cite — surfaced and counted as `relationshipProposals` in the trailer |
 | [`unknown_time.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/unknown_time.ant) | (v0.6) two observations: one whose event time is explicitly unknown (`{"unknown":{"reason":…}}`) beside one whose provenance time carries a basis — a reader must surface both forms, never substitute an instant, and read a bare string as a Known time with no basis |
 | [`ontology_revisions.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/ontology_revisions.ant) | (v0.7) one `ontology_revision` record beside the evidence it publishes — the immutable elected semantic manifest. The runners assert its semantic id (`orv1:<manifestSha256>`), target vault, previous ontology head, typed item kinds and the `ontology/v1` / `ontology` conditional position, so an implementation cannot pass by skipping the kind; the fixture also pins the exact record/revision closure and the first-publisher envelope |
+| [`originals.ant`](https://github.com/openantares/ant/blob/main/conformance/golden/originals.ant) | (v1.0) one 150-byte stored original in three `original_chunk` records, one empty original with no chunks, one plain evidence, the `original_source` records that follow an original, and cleaned-text derivatives bound to it — a reader must reassemble each original, check it against its evidence's `source_blob`, and surface the provenance and derivations rather than skip them |
+| `original_*`, `derivative_*`, `source_reference_*` | (v1.0) **negatives**, each valid in every other respect: a missing, reordered or corrupt chunk, chunks that are each sound but together are not the declared original, a record between an evidence and its chunks, a v0.7 file carrying originals, a source reference or derivative that does not bind to its original, derivative text that is not what it names, derivatives out of order, and opaque values past their size or nesting bounds |
 | [`expected.json`](https://github.com/openantares/ant/blob/main/conformance/golden/expected.json) / [`expected_negatives.json`](https://github.com/openantares/ant/blob/main/conformance/golden/expected_negatives.json) | the expected manifest scope, record sequences, counts — and which fixtures must be rejected, with why |
 
 ## The three runners
@@ -35,16 +37,16 @@ python3 conformance/run_conformance.py
 node conformance/run_conformance.mjs
 ```
 
-Both suites pass — run on 2026-09-17 against the published goldens at `v0.7.0`:
+Both suites pass — run on 2026-09-25 against the published goldens at `v1.0.0`:
 
 ```text
 $ python3 conformance/run_conformance.py
 ...
-89/89 checks passed
+221/221 checks passed
 
 $ node conformance/run_conformance.mjs
 ...
-68/68 checks passed
+192/192 checks passed
 ```
 
 ## What a conformant implementation must do
@@ -63,6 +65,8 @@ The runners are the executable form of this contract. Every implementation must:
 10. read `ontology_revisions.ant` (v0.7), surface the native `ontology_revision` record, and report its semantic id, target vault, previous head, semantic item kinds and conditional domain/chain — the fixture also pins the exact record/revision closure and the immutable first-publisher envelope.
 11. read `relationship_proposals.ant` (v0.5) and surface every `relationship_proposal` record, reporting each one's status and the support it measured (`proposalStatuses`, `proposalMatched`, `proposalNonNull`). The measurement is the point: the golden's quarantined hypothesis matched 0 of 1914 rows, and a binding that skips the kind as unknown still verifies the file while leaving a grader nothing to read.
 12. read `unknown_time.ant` (v0.6) and report the **decoded** state of each observation's times, not just the record count. `observed_at` and `extracted_at` are one of three disjoint shapes — a bare RFC 3339 string (known, no basis), `{"known":{"at":…,"basis":…}}`, or `{"unknown":{"reason":…}}` — and `expected.json` pins the observed states, the extracted bases and the unknown reasons. A binding that cannot read the additive form misclassifies these, and one that stands epoch, now or zero in for an unknown time is wrong.
+13. read `originals.ant` (v1.0) and reassemble each stored original from its `original_chunk` records, reporting its evidence id, length, SHA-256 and chunk count (`originals`) — including an EMPTY original, which has no chunks and the empty digest — and list the ids of the `original_source` records that follow it (`sourceReferenceIds`). A binding that skips the kinds as unknown still verifies the file, and would hand its caller evidence without the bytes or provenance it names. Then list the cleaned-text derivatives that follow the original (`derivatives`: evidence id, primary, job and slot), read as typed derivations — a binding that flattens them to plain evidence loses what they were cleaned from.
+14. reject every `original_*` and `derivative_*` negative in `golden/expected_negatives.json`, each valid in every other respect: a missing chunk, reordered chunks, a chunk that does not match its own digest, chunks that are each sound but together are not the declared original, a record between an evidence and its chunks, a v0.7 file carrying originals, a source reference that does not bind to the original it follows, a derivative that does not follow its primary's original, one that binds other bytes, one whose content is not the text it names, and derivatives out of (jobId, index) order.
 
 **Proving a third-party implementation** means passing this list against these goldens: port one of the runners (they are small, single-file programs) to drive your reader, or drive it directly from `expected.json` and `expected_negatives.json`.
 

@@ -1,9 +1,9 @@
 ---
 title: "Versioning: crates and format"
-description: Why the Rust crates are 0.5.x while the .ant format is 0.7.x — deliberately independent version lines, SUPPORTED_FORMAT_VERSION, and the same-major compatibility rule enforced at read time.
+description: Why the Rust crates are 0.6.x while the .ant format is 0.7 and 1.0 — deliberately independent version lines, SUPPORTED_FORMAT_VERSION, and the same-major compatibility rule enforced at read time.
 ---
 
-**The crate version and the format version are deliberately not the same number.** The published crates are at `0.5.1`; the format they implement is `0.7`. This page exists so that difference reads as the design decision it is, not a mistake.
+**The crate version and the format version are deliberately not the same number.** The published crates are at `0.6.0`; the formats they implement are `0.7` and — for a file that carries stored originals — `1.0`. This page exists so that difference reads as the design decision it is, not a mistake.
 
 ## Why they are independent
 
@@ -16,16 +16,20 @@ Under pre-1.0 semver the *minor* is the breaking slot, so aligning the crate ver
 
 A reader accepts **any MINOR at the same MAJOR** — minor bumps are additive by definition (new record kinds, new fields, new value encodings), and everything a reader already understood keeps its meaning. When a file's minor is ahead, the reader **must still read it and must say so** (`AntReader::minor_ahead`): the reader saw a subset of what the file means, and the caller decides whether that is acceptable.
 
-A **different MAJOR is refused at read time**, with an error naming both versions — a major bump means field meanings or the container framing changed, so reading on would silently misinterpret records. The rule is [§3 of the specification](../format/spec/#3-version-compatibility), and the failure it prevents is the version gate written as `version == "0.2"`: that passes every positive test while being wrong, and v0.1 of the format shipped with exactly that bug. The [conformance suite](../format/conformance/) tests for it directly.
+A MAJOR this build does not implement is **refused at read time**, with an error naming both versions — a major bump means field meanings or the container framing changed, so reading on would silently misinterpret records. The rule is [§3 of the specification](../format/spec/#3-version-compatibility), and the failure it prevents is the version gate written as `version == "0.2"`: that passes every positive test while being wrong, and v0.1 of the format shipped with exactly that bug. The [conformance suite](../format/conformance/) tests for it directly.
+
+## Two majors: 0.7 and 1.0
+
+Format **1.0** is `0.7` plus stored originals — the original file an evidence was cut from, carried in the file as digest-checked chunks. It is a MAJOR on purpose: a `0.x` reader skips unknown record kinds, so a minor would have let it import every evidence while silently dropping the originals. A `0.x` reader refuses a `1.0` file at its manifest instead. Only a file that carries an original is written as `1.0`; everything else is still written as `0.7`, byte for byte, so existing readers keep reading it. The current crates read both majors; a file at any other major (the conformance suite pins `2.0`) is refused.
 
 ## The published versions
 
 | artifact | version | links |
 |----------|---------|-------|
-| `.ant` format | **0.7** | [specification](../format/spec/) · [v0.7.0 release](https://github.com/openantares/ant/releases/tag/v0.7.0) |
-| `ant-types` | 0.5.1 | [crates.io](https://crates.io/crates/ant-types) · [docs.rs](https://docs.rs/ant-types) |
-| `antares-format` | 0.5.1 | [crates.io](https://crates.io/crates/antares-format) · [docs.rs](https://docs.rs/antares-format) |
-| `openantares` (CLI) | 0.5.1 | [crates.io](https://crates.io/crates/openantares) · [docs.rs](https://docs.rs/openantares) |
+| `.ant` format | **0.7** and **1.0** | [specification](../format/spec/) · [v1.0.0 release](https://github.com/openantares/ant/releases/tag/v1.0.0) |
+| `ant-types` | 0.6.0 | [crates.io](https://crates.io/crates/ant-types) · [docs.rs](https://docs.rs/ant-types) |
+| `antares-format` | 0.6.0 | [crates.io](https://crates.io/crates/antares-format) · [docs.rs](https://docs.rs/antares-format) |
+| `openantares` (CLI) | 0.6.0 | [crates.io](https://crates.io/crates/openantares) · [docs.rs](https://docs.rs/openantares) |
 
 The JSON Schema keeps its own permanent identifier, [`https://openantares.org/schema/ant.schema.json`](../format/schema/), referenced by the crates and served on this site.
 

@@ -1,6 +1,6 @@
 ---
 title: "ant-types — the record shapes"
-description: The Rust vocabulary of the .ant format — Vertex, Edge, Observation with event time that may be explicitly unknown, Evidence, Belief, contradiction cases, relationship proposals, elected ontology revisions, schema declarations, and SQL-fidelity typed property values with an exact Decimal.
+description: The Rust vocabulary of the .ant format — Vertex, Edge, Observation with event time that may be explicitly unknown, Evidence, Belief, contradiction cases, relationship proposals, elected ontology revisions, stored originals and cleaned-text derivations, schema declarations, and SQL-fidelity typed property values with an exact Decimal.
 ---
 
 [`ant-types`](https://crates.io/crates/ant-types) is the record vocabulary of the `.ant` format: everything that can appear inside a `.ant` file, and nothing else. The container that carries these records — compression, manifest, trailer, integrity hashing — is the separate [`antares-format`](../antares-format/) crate.
@@ -16,13 +16,14 @@ API reference: [docs.rs/ant-types](https://docs.rs/ant-types).
 - **`graph`** — [`Vertex`](https://docs.rs/ant-types/latest/ant_types/graph/struct.Vertex.html) and [`Edge`](https://docs.rs/ant-types/latest/ant_types/graph/struct.Edge.html), with typed properties and optional bitemporal validity.
 - **`observation`** — append-only, source-bound atomic facts, whose two times are an [`EventTime`](https://docs.rs/ant-types/latest/ant_types/event_time/enum.EventTime.html) (see below).
 - **`event_time`** — `EventTime`, `TimeBasis` and `UnknownTime`: a time that is either known, optionally with the basis it was drawn from, or explicitly unknown with a reason (format 0.6).
-- **`evidence`** — the source material observations and edges cite, with span offsets into the source.
+- **`evidence`** — the source material observations and edges cite, with span offsets into the source. A primary evidence may name its stored original ([`SourceBlob`](https://docs.rs/ant-types/latest/ant_types/evidence/struct.SourceBlob.html)), that original's provenance ([`SourceReference`](https://docs.rs/ant-types/latest/ant_types/evidence/struct.SourceReference.html)), and cleaned text may be bound to the exact original it came from ([`Derivation`](https://docs.rs/ant-types/latest/ant_types/evidence/struct.Derivation.html)) (format 1.0; see below).
 - **`belief`** — versioned inferred state derived from observations.
 - **`contradiction`** — [`ContradictionCase`](https://docs.rs/ant-types/latest/ant_types/contradiction/struct.ContradictionCase.html): immutable revisions comparing two or more exact claim revisions, carrying references (never copies) and three independent states — epistemic, business impact, workflow (format 0.4).
 - **`proposal`** — [`RelationshipProposal`](https://docs.rs/ant-types/latest/ant_types/proposal/struct.RelationshipProposal.html): immutable measured proposals about a source, with the run and source manifest, the measurement, the probes, the status, and a reviewer's receipt when promoted (format 0.5).
 - **`ontology`** — [`OntologyRevision`](https://docs.rs/ant-types/latest/ant_types/ontology/struct.OntologyRevision.html): an immutable elected semantic manifest with exact vault and head pins, typed definitions, explicit record and revision closure, retained positions, approval binding, publisher identity and its conditional head position (format 0.7).
 - **`schema`** — OpenSPG-compatible type declarations.
 - **`author`** — the provenance stamp records can carry.
+- **`exact_json`** — exact decoding of the two format 1.0 opaque fields, a derivation's `segment.coverage` and a source reference's `source`, so no double is rounded on the way in.
 
 ## Vertex and Edge
 
@@ -83,6 +84,26 @@ The wire form is additive, so the common case is byte-identical to what format 0
 No basis is ever fabricated onto a historical record, and only an observation that carries a basis or an unknown time takes an object form. `Edge`'s own `observed_at` / `extracted_at` remain optional instants.
 
 `Observation` also carries [`ConditionalRevision`](https://docs.rs/ant-types/latest/ant_types/observation/struct.ConditionalRevision.html) helpers (crate 0.4.1): an optimistic-concurrency condition kept inside the observation's `metadata` as a versioned envelope, so it travels through a `.ant` archive unchanged.
+
+## Stored originals (format 1.0)
+
+Since format 1.0 (crate 0.6.0) a primary `Evidence` can name the exact file it was cut from. The record carries a small reference, never the bytes; in a `.ant` file the bytes follow the evidence as `original_chunk` records, and the [container](../antares-format/) reassembles and verifies them:
+
+```rust
+pub struct SourceBlob {
+    pub asset_id: String,     // [A-Za-z0-9_-]{16,128}; an identifier, never a credential
+    pub byte_length: u64,     // exact length; 0 is an empty file
+    pub sha256: String,       // the whole original's digest, lowercase hex
+    pub media_type: String,   // descriptive only
+    pub file_name: String,    // descriptive only
+}
+```
+
+`Evidence` gains `source_blob: Option<SourceBlob>`, absent on every other record so their bytes do not change. An evidence's original is immutable: a changed file is a new evidence id.
+
+A [`SourceReference`](https://docs.rs/ant-types/latest/ant_types/evidence/struct.SourceReference.html) records where an original came from — a folder, a drive item, a mail message. Any number may bind to one original; they are append-only, bound to the evidence's `SourceBlob` (`binds()`), and carry the provenance itself as opaque JSON in `source` (at most 16 KiB, 64 levels deep).
+
+A [`Derivation`](https://docs.rs/ant-types/latest/ant_types/evidence/struct.Derivation.html) binds cleaned text to the exact original it was normalized from, under the `antares.normalized-text/v1` contract (`NORMALIZED_TEXT_CONTRACT`). It is carried by ordinary blob-free evidence whose `content` is the cleaned text, as `derivation: Option<Box<Derivation>>`: the primary's id and blob binding, the [`Normalizer`](https://docs.rs/ant-types/latest/ant_types/evidence/struct.Normalizer.html) that produced it, a job id, a [`DerivationSegment`](https://docs.rs/ant-types/latest/ant_types/evidence/struct.DerivationSegment.html) slot (index, locator, opaque `coverage` of at most 8 KiB and 64 levels), and the digest and length of the text. Once written, a derivation is never changed or dropped. Each of the three types has a `validate()` that enforces the format's field rules.
 
 ## Typed property values
 

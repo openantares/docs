@@ -35,19 +35,31 @@ Every transcript below is real output, run against the [conformance golden files
 **Exit 0 — the positive goldens validate clean:**
 
 ```text
-$ openantares validate basic.ant forward_compat.ant tombstones.ant
+$ openantares validate basic.ant forward_compat.ant tombstones.ant originals.ant
 basic.ant: OK  version=0.7 records=7
 forward_compat.ant: OK  version=0.7 records=1
 tombstones.ant: OK  version=0.7 records=4
+originals.ant: OK  version=1.0 records=10
 $ echo $?
 0
 ```
 
-**Exit 65 — the negative golden.** `major_version.ant` declares format v1.0 and is valid in every other respect; a 0.x reader must refuse it for the version, not misread it:
+`originals.ant` is format 1.0: its stored originals are reassembled from their chunks and each one is checked against its evidence's `source_blob` digest before the file counts as valid.
+
+**Exit 65 — the negative goldens.** `major_version.ant` declares format v2.0 and is valid in every other respect; a reader of 0.x and 1.x must refuse it for the version, not misread it:
 
 ```text
 $ openantares validate major_version.ant
-major_version.ant: FAIL  file is format v1.0, this reader implements v0.7. Major versions are not compatible: a major bump means field meanings or the container framing changed, so reading it here would silently misinterpret records. Upgrade the reader to a v1.x build, or re-export the file at v0.
+major_version.ant: FAIL  file is format v2.0, this reader implements v0.7 and v1.0. Major versions are not compatible: a major bump means field meanings or the container framing changed, so reading it here would silently misinterpret records. Upgrade the reader to a v2.x build, or re-export the file at v0.
+$ echo $?
+65
+```
+
+A stored original with a chunk missing fails the same way — the integrity check names the evidence and the gap:
+
+```text
+$ openantares validate original_missing_chunk.ant
+original_missing_chunk.ant: FAIL  integrity: original of evidence ev_original: chunk 2 at offset 128 where chunk 1 at offset 64 is next (missing or reordered chunk)
 $ echo $?
 65
 ```
