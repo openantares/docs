@@ -15,7 +15,7 @@ The Antares engine that fills and reasons over these files is a separate, privat
 
 ## The container in one paragraph
 
-One zstd-compressed stream of NDJSON records: a `manifest` first, data records in the middle, and a `trailer` last carrying per-kind counts and a SHA-256 over every preceding uncompressed line — so truncation and tampering are detectable in a single pass, without a side channel. Compatibility is same-major: any minor at the same major is readable (minor bumps are additive-only; unknown record kinds are skipped, and `AntReader::minor_ahead` reports when a file is newer than the reader). A different major is refused explicitly. The full rules live in the [specification](../../format/spec/).
+One zstd-compressed stream of NDJSON records: a `manifest` first, data records in the middle, and a `trailer` last carrying per-kind counts and a SHA-256 over every preceding uncompressed line — so truncation and tampering are detectable in a single pass, without a side channel. Compatibility is same-major: any minor at the same major is readable (minor bumps are additive-only; unknown record kinds are skipped, and `AntReader::minor_ahead` reports when a file is newer than the reader). This build reads both majors it writes — 0.x, and 1.x for a file that carries stored originals — and any other major is refused explicitly. The full rules live in the [specification](../../format/spec/).
 
 ## Write a file, read it back, validate it
 
@@ -26,7 +26,7 @@ This example was built as the **first outside consumer** of the published crates
 :::
 
 ```rust
-// [dependencies]  ant-types = "0.5", antares-format = "0.5"
+// [dependencies]  ant-types = "0.6", antares-format = "0.6"
 use std::collections::BTreeMap;
 
 use ant_types::{
@@ -132,17 +132,17 @@ hello.ant: OK  version=0.7 records=2
 - `AntWriter::new(out, manifest, level)` writes the manifest line into any `std::io::Write` sink (`level` is the zstd compression level, `0` = default).
 - `write(AntRecord)` appends one record; the writer keeps the running per-kind `Counts` and the running hash.
 
-**Records** — [`AntRecord`](https://docs.rs/antares-format/latest/antares_format/enum.AntRecord.html) has one variant per data kind: `SchemaType`, `Vertex`, `Edge`, `Observation`, `Evidence`, `Belief`, `Vector`, `VertexTombstone`, `EdgeTombstone` (0.2), `ContradictionCase` (0.4), `RelationshipProposal` (0.5) and `OntologyRevision` (0.7), plus the `Trailer`. The enum is matched exhaustively by consumers, which is why a format minor that adds a kind is a crate minor — see [Versioning](../../versioning/).
+**Records** — [`AntRecord`](https://docs.rs/antares-format/latest/antares_format/enum.AntRecord.html) has one variant per data kind: `SchemaType`, `Vertex`, `Edge`, `Observation`, `Evidence`, `Belief`, `Vector`, `VertexTombstone`, `EdgeTombstone` (0.2), `ContradictionCase` (0.4), `RelationshipProposal` (0.5), `OntologyRevision` (0.7), `OriginalChunk` and `OriginalSource` (1.0), plus the `Trailer`. The enum is matched exhaustively by consumers, which is why a format minor that adds a kind is a crate minor — see [Versioning](../../versioning/).
 - `finish()` appends the trailer (counts + SHA-256) and flushes the zstd frame, returning the sink.
 
 **Reader** — [`AntReader`](https://docs.rs/antares-format/latest/antares_format/struct.AntReader.html):
 
-- `AntReader::new(input)` reads and checks the manifest from any `std::io::Read` source: zstd framing, `format == "antares"`, and the version policy — a different **major is refused at read time**, with an error naming both versions.
+- `AntReader::new(input)` reads and checks the manifest from any `std::io::Read` source: zstd framing, `format == "antares"`, and the version policy — a **major this build does not implement is refused at read time**, with an error naming both versions. `AntReader::new_with_manifest_budget` sets the memory a manifest may take (the default is 256 MiB).
 - `next_record()` streams records one at a time; unknown kinds are skipped (but still hashed). `Ok(None)` is returned only after the trailer verified.
 - `manifest` (public field) is available immediately after construction; `version` is the parsed file version.
-- `verified` — true once the trailer's SHA-256 and per-kind counts matched what the reader saw. Truncation, tampering, data after the trailer, and count mismatches all surface as errors instead.
+- `verified` — true once the trailer's SHA-256 and per-kind counts matched what the reader saw — and, in a 1.0 file, once every stored original was reassembled from its chunks and matched its evidence's `source_blob`. Truncation, tampering, data after the trailer, and count mismatches all surface as errors instead.
 - `minor_ahead` — true when the file's minor version is ahead of this build: the file is readable, but it may contain record kinds or value encodings this reader does not know. A caller that needs completeness can refuse; one that does not can proceed.
 
-**Version constants** — `FORMAT_VERSION` (the `MAJOR.MINOR` written into new manifests) and [`SUPPORTED_FORMAT_VERSION`](https://docs.rs/antares-format/latest/antares_format/constant.SUPPORTED_FORMAT_VERSION.html) (the format this build reads and writes — see [Versioning](../../versioning/) for why this is not the crate version), plus `FormatVersion` with the parse and compatibility rules.
+**Version constants** — `FORMAT_VERSION` (the `MAJOR.MINOR` written into new manifests) and [`SUPPORTED_FORMAT_VERSION`](https://docs.rs/antares-format/latest/antares_format/constant.SUPPORTED_FORMAT_VERSION.html) (the format this build reads and writes — see [Versioning](../../versioning/) for why this is not the crate version), `ORIGINALS_FORMAT_VERSION` (`"1.0"`, written only for a selection that carries stored originals), plus `FormatVersion` with the parse and compatibility rules.
 
 **Errors** — everything is `AntError`, one enum for framing, version, JSON, and integrity failures.
