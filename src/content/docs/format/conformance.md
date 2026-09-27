@@ -37,7 +37,7 @@ python3 conformance/run_conformance.py
 node conformance/run_conformance.mjs
 ```
 
-Both suites pass — run on 2026-09-25 against the published goldens at `v1.0.0`:
+Both suites pass — run on 2026-09-27 against the published goldens at `v1.0.1`:
 
 ```text
 $ python3 conformance/run_conformance.py
