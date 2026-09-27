@@ -57,7 +57,7 @@ As a CLI:
 
 ```text
 $ node bindings/js/openantares.mjs validate conformance/golden/basic.ant conformance/golden/originals.ant
-conformance/golden/basic.ant: OK  version=0.7 records=7 skipped=0 counts={"schemaTypes":0,"vertices":2,"edges":1,"observations":1,"evidence":1,"beliefs":1,"vectors":1,"vertexTombstones":0,"edgeTombstones":0,"contradictionCases":0,"relationshipProposals":0,"ontologyRevisions":0,"originalChunks":0,"originalSources":0}
+conformance/golden/basic.ant: OK  version=0.7 records=7 skipped=0 counts={"schemaTypes":0,"vertices":2,"edges":1,"observations":1,"evidence":1,"beliefs":1,"vectors":1,"vertexTombstones":0,"edgeTombstones":0,"contradictionCases":0,"relationshipProposals":0,"ontologyRevisions":0}
 conformance/golden/originals.ant: OK  version=1.0 records=10 skipped=0 counts={"schemaTypes":0,"vertices":0,"edges":0,"observations":0,"evidence":5,"beliefs":0,"vectors":0,"vertexTombstones":0,"edgeTombstones":0,"contradictionCases":0,"relationshipProposals":0,"ontologyRevisions":0,"originalChunks":3,"originalSources":2}
 $ echo $?
 0
